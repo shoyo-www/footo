@@ -1,22 +1,18 @@
-// server.js
 const express = require('express');
+const mongoose = require('mongoose');
+const authRoutes = require('./routes/auth');
+
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-// Middleware
 app.use(express.json());
+app.use('/auth', authRoutes);
 
-// Example route
-app.get('/', (req, res) => {
-  res.send('🚀 Express server is running!');
-});
+const MONGO = process.env.MONGODB_URI || 'mongodb://localhost:27017/footo';
+mongoose.connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  });
 
-// Example API route
-app.get('/api/hello', (req, res) => {
-  res.json({ message: 'Hello from the Express API!' });
-});
-
-// Start server
-app.listen(PORT, () => {
-  console.log(`✅ Server is running on http://localhost:${PORT}`);
-});
+const PORT = 3000;
+app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
